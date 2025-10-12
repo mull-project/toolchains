@@ -19,11 +19,11 @@ jobs:
         with:
             repository: 'llvm/llvm-project'
             ref: ${{ env.LLVM_REF }}
-            path: 'llvm-src'
-      - name: Run CI task
+            path: 'llvm'
+      - name: Build toolchain
         run: |
             mkdir build.dir
-            cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm-src -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
+            cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm/llvm -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
             cmake --build build.dir --target stage2-distribution
             cmake --build build.dir --target stage2-install-distribution
             tar -czvf darwin-aarch64.toolchain.tar.gz darwin-aarch64.toolchain
