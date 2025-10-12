@@ -52,10 +52,10 @@ jobs:
                 -DCMAKE_INSTALL_PREFIX=${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
             cmake --build build.dir --target ${{ env.STAGE }}distribution
             cmake --build build.dir --target ${{ env.STAGE }}install-distribution
-            tar -cvfz \
+            tar -cvzf \
                 ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain.tar.gz \
                 ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
-            tar cfvJ \
+            tar cvfJ \
                 ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain.tar.xz \
                 ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
       - name: Upload toolchain
@@ -67,4 +67,3 @@ jobs:
           overwrite: true
           file_glob: true
           target_commit: ${{ github.sha }}
-          make_latest: false
