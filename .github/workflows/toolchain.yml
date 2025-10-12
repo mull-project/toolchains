@@ -53,7 +53,7 @@ jobs:
             path: 'llvm'
       - name: Build toolchain
         run: |
-            apt-get install ccache ninja-build
+            sudo apt-get install ccache ninja-build
             mkdir build.dir
             cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm/llvm -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
             cmake --build build.dir --target stage2-distribution
