@@ -1,0 +1,27 @@
+name: Build toolchain
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["**"]
+  pull_request:
+    branches: ["main"]
+jobs:
+  macos:
+    name: macOS toolchain
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run CI task
+        run: |
+            echo "Hello"
+            echo "foo" > foo.tar.gz
+            echo "bar" > bar.tar.xz
+      - name: Attach package to the tag
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "*.tar.*"
+          tag: ${{ github.run_id }}
+          overwrite: true
+          file_glob: true
