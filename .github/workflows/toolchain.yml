@@ -6,47 +6,24 @@ env:
 on:
   push:
     branches: ["main"]
-    tags: ["**"]
   pull_request:
     branches: ["main"]
 jobs:
-#   macos:
-#     name: macOS toolchain
-#     runs-on: macos-latest
-#     steps:
-#       - uses: actions/checkout@v5
-#       - uses: actions/checkout@v5
-#         with:
-#             repository: 'llvm/llvm-project'
-#             ref: ${{ env.LLVM_REF }}
-#             path: 'llvm'
-#       - name: Build toolchain
-#         run: |
-#             brew install ccache
-#             mkdir build.dir
-#             cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm/llvm -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
-#             cmake --build build.dir --target stage2-distribution
-#             cmake --build build.dir --target stage2-install-distribution
-#             tar -czvf darwin-aarch64.toolchain.tar.gz darwin-aarch64.toolchain
-#       - name: Upload toolchain
-#         uses: svenstaro/upload-release-action@v2
-#         with:
-#           repo_token: ${{ secrets.GITHUB_TOKEN }}
-#           file: "*.tar.*"
-#           tag: ${{ github.run_id }}
-#           overwrite: true
-#           file_glob: true
-
-  ubuntu:
-    name: Ubuntu toolchain (${{ matrix.ARCH}})
+  toolchain-build:
+    name: ${{ matrix.OS }} toolchain (${{ matrix.ARCH}})
     runs-on: ${{ matrix.RUNNER }}
     strategy:
       matrix:
         include:
-            - ARCH: "x86_64"
+            - ARCH: x86_64
               RUNNER: ubuntu-22.04
-            - ARCH: "aarch64"
+              OS: Linux
+            - ARCH: aarch64
               RUNNER: ubuntu-22.04-arm
+              OS: Linux
+            - ARCH: aarch64
+              RUNNER: macos-latest
+              OS: Darwin
     steps:
       - uses: actions/checkout@v5
       - uses: actions/checkout@v5
@@ -58,10 +35,16 @@ jobs:
         run: |
             sudo apt-get install ccache ninja-build
             mkdir build.dir
-            cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm/llvm -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
+            cmake -G Ninja \
+                -B build.dir \
+                -C ToolchainCache.cmake \
+                llvm/llvm \
+                -DCMAKE_INSTALL_PREFIX=${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
             cmake --build build.dir --target stage2-distribution
             cmake --build build.dir --target stage2-install-distribution
-            tar -czvf linux-${{ matrix.ARCH }}.toolchain.tar.gz linux-${{ matrix.ARCH }}.toolchain
+            tar -czvf \
+                ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain.tar.gz \
+                ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
       - name: Upload toolchain
         uses: svenstaro/upload-release-action@v2
         with:
