@@ -2,6 +2,9 @@ name: Build toolchain
 
 env:
     LLVM_REF: "cd708029e0b2869e80abe31ddb175f7c35361f90" # 19.1.7
+    # GH Actions are dead slow, can't build two-stage
+    CMAKE_CACHE: "SingleStage" # ToolchainCache
+    STAGE: "" # stage2-
 
 on:
   push:
@@ -14,6 +17,7 @@ jobs:
     runs-on: ${{ matrix.RUNNER }}
     strategy:
       matrix:
+        fail-fast: false
         include:
             - ARCH: x86_64
               RUNNER: ubuntu-22.04
@@ -26,6 +30,9 @@ jobs:
               OS: Darwin
     steps:
       - uses: actions/checkout@v5
+      - uses: hendrikmuhs/ccache-action@v1.2
+        with:
+            max-size: "5000MB"
       - uses: actions/checkout@v5
         with:
             repository: 'llvm/llvm-project'
@@ -44,11 +51,11 @@ jobs:
             mkdir build.dir
             cmake -G Ninja \
                 -B build.dir \
-                -C ToolchainCache.cmake \
+                -C ${{ env.CMAKE_CACHE }}.cmake \
                 llvm/llvm \
                 -DCMAKE_INSTALL_PREFIX=${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
-            cmake --build build.dir --target stage2-distribution
-            cmake --build build.dir --target stage2-install-distribution
+            cmake --build build.dir --target ${{ env.STAGE }}distribution
+            cmake --build build.dir --target ${{ env.STAGE }}install-distribution
             tar -czvf \
                 ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain.tar.gz \
                 ${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
