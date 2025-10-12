@@ -67,3 +67,4 @@ jobs:
           tag: ${{ github.run_id }}
           overwrite: true
           file_glob: true
+          target_commit: ${{ github.sha }}
