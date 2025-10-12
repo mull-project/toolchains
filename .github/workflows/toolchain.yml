@@ -41,7 +41,6 @@ jobs:
             brew install ccache
       - name: Build toolchain
         run: |
-            sudo apt-get install ccache ninja-build
             mkdir build.dir
             cmake -G Ninja \
                 -B build.dir \
