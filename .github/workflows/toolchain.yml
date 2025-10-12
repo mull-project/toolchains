@@ -10,9 +10,40 @@ on:
   pull_request:
     branches: ["main"]
 jobs:
-  build-toolchain:
-    name: macOS toolchain
-    runs-on: macos-latest
+#   macos:
+#     name: macOS toolchain
+#     runs-on: macos-latest
+#     steps:
+#       - uses: actions/checkout@v5
+#       - uses: actions/checkout@v5
+#         with:
+#             repository: 'llvm/llvm-project'
+#             ref: ${{ env.LLVM_REF }}
+#             path: 'llvm'
+#       - name: Build toolchain
+#         run: |
+#             brew install ccache
+#             mkdir build.dir
+#             cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm/llvm -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
+#             cmake --build build.dir --target stage2-distribution
+#             cmake --build build.dir --target stage2-install-distribution
+#             tar -czvf darwin-aarch64.toolchain.tar.gz darwin-aarch64.toolchain
+#       - name: Upload toolchain
+#         uses: svenstaro/upload-release-action@v2
+#         with:
+#           repo_token: ${{ secrets.GITHUB_TOKEN }}
+#           file: "*.tar.*"
+#           tag: ${{ github.run_id }}
+#           overwrite: true
+#           file_glob: true
+
+  ubuntu:
+    name: Ubuntu toolchain (${{ matrix.ARCH}})
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        # ARCH: ["x86_64", "aarch64"]
+        ARCH: ["x86_64"]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/checkout@v5
@@ -27,7 +58,7 @@ jobs:
             cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm/llvm -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
             cmake --build build.dir --target stage2-distribution
             cmake --build build.dir --target stage2-install-distribution
-            tar -czvf darwin-aarch64.toolchain.tar.gz darwin-aarch64.toolchain
+            tar -czvf linux-${{ matrix.ARCH }}.toolchain.tar.gz linux-${{ matrix.ARCH }}.toolchain
       - name: Upload toolchain
         uses: svenstaro/upload-release-action@v2
         with:
