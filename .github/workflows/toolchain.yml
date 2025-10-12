@@ -16,8 +16,8 @@ jobs:
     name: ${{ matrix.OS }} toolchain (${{ matrix.ARCH}})
     runs-on: ${{ matrix.RUNNER }}
     strategy:
+      fail-fast: false
       matrix:
-        fail-fast: false
         include:
             - ARCH: x86_64
               RUNNER: ubuntu-22.04
