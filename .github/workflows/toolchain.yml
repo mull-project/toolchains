@@ -1,5 +1,8 @@
 name: Build toolchain
 
+env:
+    LLVM_REF: "cd708029e0b2869e80abe31ddb175f7c35361f90" # 19.1.7
+
 on:
   push:
     branches: ["main"]
@@ -7,17 +10,24 @@ on:
   pull_request:
     branches: ["main"]
 jobs:
-  macos:
+  build-toolchain:
     name: macOS toolchain
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+            repository: 'llvm/llvm-project'
+            ref: ${{ env.LLVM_REF }}
+            path: 'llvm-src'
       - name: Run CI task
         run: |
-            echo "Hello"
-            echo "foo" > foo.tar.gz
-            echo "bar" > bar.tar.xz
-      - name: Attach package to the tag
+            mkdir build.dir
+            cmake -G Ninja -B build.dir -C ToolchainCache.cmake llvm-src -DCMAKE_INSTALL_PREFIX=darwin-aarch64.toolchain
+            cmake --build build.dir --target stage2-distribution
+            cmake --build build.dir --target stage2-install-distribution
+            tar -czvf darwin-aarch64.toolchain.tar.gz darwin-aarch64.toolchain
+      - name: Upload toolchain
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
