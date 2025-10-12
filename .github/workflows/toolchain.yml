@@ -31,6 +31,14 @@ jobs:
             repository: 'llvm/llvm-project'
             ref: ${{ env.LLVM_REF }}
             path: 'llvm'
+      - name: Install deps
+        if: matrix.OS == 'Linux'
+        run: |
+            sudo apt-get install ccache ninja-build
+      - name: Install deps
+        if: matrix.OS == 'Darwin'
+        run: |
+            brew install ccache
       - name: Build toolchain
         run: |
             sudo apt-get install ccache ninja-build
