@@ -35,6 +35,7 @@ set(LLVM_TOOLCHAIN_TOOLS
     llvm-ranlib
     llvm-strip
     llvm-symbolizer
+    clang-apply-replacements
 
     CACHE STRING "")
 

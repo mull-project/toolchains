@@ -34,6 +34,7 @@ set(LLVM_TOOLCHAIN_TOOLS
     llvm-symbolizer
     clangd
     llvm-cov
+    clang-apply-replacements
 
     CACHE STRING "")
 
