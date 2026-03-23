@@ -10,6 +10,7 @@ set(LLVM_CCACHE_BUILD ON CACHE BOOL "")
 set(LLVM_ENABLE_ZSTD OFF CACHE BOOL "")
 set(LLVM_ENABLE_TERMINFO OFF CACHE BOOL "")
 set(LLVM_ENABLE_ZLIB OFF CACHE BOOL "")
+set(LLVM_ENABLE_LIBXML2 OFF CACHE BOOL "")
 
 # Only build the native target in stage1 since it is a throwaway build.
 set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
