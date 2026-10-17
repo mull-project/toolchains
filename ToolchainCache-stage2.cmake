@@ -13,6 +13,7 @@ set(LLVM_CCACHE_BUILD ON CACHE BOOL "")
 set(LLVM_ENABLE_ZSTD OFF CACHE BOOL "")
 set(LLVM_ENABLE_ZLIB OFF CACHE BOOL "")
 set(LLVM_ENABLE_LIBXML2 OFF CACHE BOOL "")
+set(LLVM_STATIC_LINK_CXX_STDLIB ON CACHE BOOL "")
 
 set(CMAKE_BUILD_TYPE Release CACHE STRING "")
 
@@ -21,7 +22,6 @@ if(APPLE)
 endif()
 
 # setup toolchain
-set(LLVM_INSTALL_TOOLCHAIN_ONLY ON CACHE BOOL "")
 set(LLVM_TOOLCHAIN_TOOLS
     ${libtool_darwin}
     clang-format
@@ -35,6 +35,8 @@ set(LLVM_TOOLCHAIN_TOOLS
     llvm-ranlib
     llvm-strip
     llvm-symbolizer
+    clangd
+    llvm-cov
 
     CACHE STRING "")
 
@@ -49,7 +51,6 @@ set(LLVM_DISTRIBUTION_COMPONENTS
     clang
     LTO
     lld
-    clang-format
     clang-resource-headers
     builtins
     runtimes

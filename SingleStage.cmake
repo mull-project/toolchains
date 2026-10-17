@@ -18,7 +18,6 @@ if(APPLE)
 endif()
 
 # setup toolchain
-set(LLVM_INSTALL_TOOLCHAIN_ONLY ON CACHE BOOL "")
 set(LLVM_TOOLCHAIN_TOOLS
     ${libtool_darwin}
     clang-format
@@ -48,7 +47,6 @@ set(LLVM_DISTRIBUTION_COMPONENTS
     clang
     LTO
     lld
-    clang-format
     clang-resource-headers
     builtins
     runtimes
