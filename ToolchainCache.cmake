@@ -8,7 +8,6 @@ set(LLVM_ENABLE_RUNTIMES "compiler-rt;libcxx;libcxxabi;libunwind" CACHE STRING "
 set(LLVM_INSTALL_TOOLCHAIN_ONLY ON CACHE BOOL "")
 set(LLVM_CCACHE_BUILD ON CACHE BOOL "")
 set(LLVM_ENABLE_ZSTD OFF CACHE BOOL "")
-set(LLVM_ENABLE_TERMINFO OFF CACHE BOOL "")
 set(LLVM_ENABLE_ZLIB OFF CACHE BOOL "")
 set(LLVM_ENABLE_LIBXML2 OFF CACHE BOOL "")
 
@@ -42,6 +41,7 @@ set(CLANG_BOOTSTRAP_TARGETS
     clang-test-depends
     distribution
     install-distribution
+    install-distribution-stripped
     clang CACHE STRING "")
 
 # Setup the bootstrap build.
