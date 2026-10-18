@@ -22,7 +22,9 @@ set(PACKAGE_VENDOR LLVM.org CACHE STRING "")
 
 # Setting up the stage2 LTO option needs to be done on the stage1 build so that
 # the proper LTO library dependencies can be connected.
-set(BOOTSTRAP_LLVM_ENABLE_LTO ON CACHE BOOL "")
+# ThinLTO rather than full LTO: full LTO links of clang/lld/clangd are too slow
+# and memory hungry for GitHub-hosted runners.
+set(BOOTSTRAP_LLVM_ENABLE_LTO Thin CACHE STRING "")
 
 if(NOT APPLE)
     # Since LLVM_ENABLE_LTO is ON we need a LTO capable linker
