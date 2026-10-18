@@ -3,12 +3,10 @@
 
 # Enable LLVM projects and runtimes
 set(LLVM_ENABLE_PROJECTS "clang;lld" CACHE STRING "")
-# Stage1 only needs compiler-rt. On Darwin stage1 tools run with
-# DYLD_LIBRARY_PATH pointing at stage1's lib/ (for libLTO), so a stage1 libc++
-# there would replace the system one they were linked against.
+# Only compiler-rt. Besides being all stage2 ships, on Darwin stage1 tools run
+# with DYLD_LIBRARY_PATH pointing at stage1's lib/ (for libLTO), so a stage1
+# libc++ there would replace the system one they were linked against.
 set(LLVM_ENABLE_RUNTIMES "compiler-rt" CACHE STRING "")
-# Passed to stage2 after LLVM_ENABLE_RUNTIMES, so it wins there
-set(BOOTSTRAP_LLVM_ENABLE_RUNTIMES "compiler-rt;libcxx;libcxxabi;libunwind" CACHE STRING "")
 
 set(LLVM_INSTALL_TOOLCHAIN_ONLY ON CACHE BOOL "")
 set(LLVM_CCACHE_BUILD ON CACHE BOOL "")

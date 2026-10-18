@@ -74,15 +74,20 @@ jobs:
                 --component FileCheck \
                 --strip \
                 --prefix ${{ matrix.OS }}-${{ matrix.ARCH }}.filecheck
-      - name: Stub out unused tools
+      - name: Add files toolchains_llvm expects
         run: |
+            toolchain=${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain
             # toolchains_llvm symlinks these into its toolchain repo, so they
             # have to exist, but mull never runs them
             for tool in clang-format clang-tidy clangd; do
-                stub=${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain/bin/$tool
+                stub=$toolchain/bin/$tool
                 printf '#!/bin/sh\necho "%s is not shipped with this toolchain" >&2\nexit 1\n' $tool > $stub
                 chmod +x $stub
             done
+            # Without libc++ include/ is empty, but toolchains_llvm requires
+            # include/c++ to exist and include/** to match at least one file
+            mkdir -p $toolchain/include/c++
+            touch $toolchain/include/c++/.keep
       - name: Package toolchain
         run: |
             for dist in toolchain filecheck; do

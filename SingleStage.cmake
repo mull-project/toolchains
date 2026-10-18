@@ -1,7 +1,14 @@
 # Based on clang/cmake/caches/DistributionExample-stage2.cmake
 
 set(LLVM_ENABLE_PROJECTS "clang;lld" CACHE STRING "")
-set(LLVM_ENABLE_RUNTIMES "compiler-rt;libcxx;libcxxabi;libunwind" CACHE STRING "")
+# Only compiler-rt: toolchains_llvm compiles against the macOS SDK's libc++ and
+# mull uses libstdc++ on Linux, so the toolchain's own libc++ would go unused
+set(LLVM_ENABLE_RUNTIMES "compiler-rt" CACHE STRING "")
+# Parts of compiler-rt mull doesn't use
+set(COMPILER_RT_BUILD_LIBFUZZER OFF CACHE BOOL "")
+set(COMPILER_RT_BUILD_ORC OFF CACHE BOOL "")
+set(COMPILER_RT_BUILD_XRAY OFF CACHE BOOL "")
+set(COMPILER_RT_ENABLE_IOS OFF CACHE BOOL "")
 
 set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
 set(LLVM_INSTALL_TOOLCHAIN_ONLY ON CACHE BOOL "")
@@ -51,9 +58,10 @@ set(LLVM_TOOLCHAIN_UTILITIES
     FileCheck
     CACHE STRING "")
 
+# No LTO: libLTO is only used for LTO links through Apple's ld, which mull
+# doesn't do
 set(LLVM_DISTRIBUTION_COMPONENTS
     clang
-    LTO
     lld
     clang-resource-headers
     builtins
