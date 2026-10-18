@@ -16,7 +16,15 @@ set(LLVM_CCACHE_BUILD ON CACHE BOOL "")
 set(LLVM_ENABLE_ZSTD OFF CACHE BOOL "")
 set(LLVM_ENABLE_ZLIB OFF CACHE BOOL "")
 set(LLVM_ENABLE_LIBXML2 OFF CACHE BOOL "")
-set(LLVM_STATIC_LINK_CXX_STDLIB ON CACHE BOOL "")
+# We never run the test suites. With tests on, the runtimes build also pulls in
+# ~25 LLVM tools (lli, opt, llvm-jitlink, ...) just for compiler-rt's tests
+set(LLVM_INCLUDE_TESTS OFF CACHE BOOL "")
+set(LLVM_INCLUDE_BENCHMARKS OFF CACHE BOOL "")
+set(LLVM_INCLUDE_EXAMPLES OFF CACHE BOOL "")
+if(NOT APPLE)
+    # clang ignores -static-libstdc++ on Darwin and warns on every link
+    set(LLVM_STATIC_LINK_CXX_STDLIB ON CACHE BOOL "")
+endif()
 
 set(CMAKE_BUILD_TYPE Release CACHE STRING "")
 

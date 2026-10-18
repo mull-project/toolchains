@@ -13,6 +13,11 @@ set(LLVM_CCACHE_BUILD ON CACHE BOOL "")
 set(LLVM_ENABLE_ZSTD OFF CACHE BOOL "")
 set(LLVM_ENABLE_ZLIB OFF CACHE BOOL "")
 set(LLVM_ENABLE_LIBXML2 OFF CACHE BOOL "")
+# We never run the test suites. With tests on, the runtimes build also pulls in
+# ~25 LLVM tools (lli, opt, llvm-jitlink, ...) just for compiler-rt's tests
+set(LLVM_INCLUDE_TESTS OFF CACHE BOOL "")
+set(LLVM_INCLUDE_BENCHMARKS OFF CACHE BOOL "")
+set(LLVM_INCLUDE_EXAMPLES OFF CACHE BOOL "")
 
 # Only build the native target in stage1 since it is a throwaway build.
 set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
