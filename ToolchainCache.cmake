@@ -2,7 +2,7 @@
 # This file sets up a CMakeCache for a simple distribution bootstrap build.
 
 # Enable LLVM projects and runtimes
-set(LLVM_ENABLE_PROJECTS "clang;clang-tools-extra;lld" CACHE STRING "")
+set(LLVM_ENABLE_PROJECTS "clang;lld" CACHE STRING "")
 # Stage1 only needs compiler-rt. On Darwin stage1 tools run with
 # DYLD_LIBRARY_PATH pointing at stage1's lib/ (for libLTO), so a stage1 libc++
 # there would replace the system one they were linked against.

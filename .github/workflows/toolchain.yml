@@ -74,12 +74,18 @@ jobs:
                 --component FileCheck \
                 --strip \
                 --prefix ${{ matrix.OS }}-${{ matrix.ARCH }}.filecheck
+      - name: Stub out unused tools
+        run: |
+            # toolchains_llvm symlinks these into its toolchain repo, so they
+            # have to exist, but mull never runs them
+            for tool in clang-format clang-tidy clangd; do
+                stub=${{ matrix.OS }}-${{ matrix.ARCH }}.toolchain/bin/$tool
+                printf '#!/bin/sh\necho "%s is not shipped with this toolchain" >&2\nexit 1\n' $tool > $stub
+                chmod +x $stub
+            done
       - name: Package toolchain
         run: |
             for dist in toolchain filecheck; do
-                tar -cvzf \
-                    ${{ matrix.OS }}-${{ matrix.ARCH }}.$dist.tar.gz \
-                    ${{ matrix.OS }}-${{ matrix.ARCH }}.$dist
                 tar cvfJ \
                     ${{ matrix.OS }}-${{ matrix.ARCH }}.$dist.tar.xz \
                     ${{ matrix.OS }}-${{ matrix.ARCH }}.$dist
@@ -88,7 +94,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: "*.tar.*"
+          file: "*.tar.xz"
           tag: ${{ github.run_id }}
           overwrite: true
           file_glob: true

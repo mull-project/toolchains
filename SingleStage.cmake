@@ -1,6 +1,6 @@
 # Based on clang/cmake/caches/DistributionExample-stage2.cmake
 
-set(LLVM_ENABLE_PROJECTS "clang;clang-tools-extra;lld" CACHE STRING "")
+set(LLVM_ENABLE_PROJECTS "clang;lld" CACHE STRING "")
 set(LLVM_ENABLE_RUNTIMES "compiler-rt;libcxx;libcxxabi;libunwind" CACHE STRING "")
 
 set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
@@ -13,15 +13,22 @@ set(LLVM_STATIC_LINK_CXX_STDLIB ON CACHE BOOL "")
 
 set(CMAKE_BUILD_TYPE Release CACHE STRING "")
 
+# Build clang, lld and the LLVM tools as a single multi-call `llvm` binary, so
+# they share one copy of the LLVM libraries
+set(LLVM_TOOL_LLVM_DRIVER_BUILD ON CACHE BOOL "")
+
 if(APPLE)
     set(libtool_darwin llvm-libtool-darwin)
+    # toolchains_llvm runs llvm-libtool-darwin as `libtool`; this makes the
+    # multi-call binary recognise that name
+    set(LLVM_INSTALL_CCTOOLS_SYMLINKS ON CACHE BOOL "")
 endif()
 
 # setup toolchain
+# clang-format, clang-tidy and clangd are stubbed out at packaging time, see
+# .github/workflows/toolchain.yml
 set(LLVM_TOOLCHAIN_TOOLS
     ${libtool_darwin}
-    clang-format
-    clang-tidy
     llvm-ar
     llvm-dwp
     llvm-nm
@@ -31,8 +38,9 @@ set(LLVM_TOOLCHAIN_TOOLS
     llvm-ranlib
     llvm-strip
     llvm-symbolizer
-    clangd
     llvm-cov
+    # Not added automatically since we set LLVM_TOOLCHAIN_TOOLS ourselves
+    llvm-driver
 
     CACHE STRING "")
 
