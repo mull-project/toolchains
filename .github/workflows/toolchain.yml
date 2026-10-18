@@ -89,10 +89,18 @@ jobs:
             mkdir -p $toolchain/include/c++
             touch $toolchain/include/c++/.keep
       - name: Package toolchain
+        env:
+            # The 64MB dictionary of -9 fits most of bin/llvm
+            XZ_OPT: "-9"
         run: |
+            # The build is reproducible; fix tar's order, mtimes and owners so
+            # the archives are too. macOS' bsdtar lacks --sort, use GNU tar
+            tar=$(command -v gtar || command -v tar)
+            mtime=$(git -C llvm log -1 --format=%ct)
             for dist in toolchain filecheck; do
-                tar cvfJ \
-                    ${{ matrix.OS }}-${{ matrix.ARCH }}.$dist.tar.xz \
+                $tar --sort=name --mtime=@$mtime \
+                    --owner=0 --group=0 --numeric-owner --format=gnu \
+                    -cvJf ${{ matrix.OS }}-${{ matrix.ARCH }}.$dist.tar.xz \
                     ${{ matrix.OS }}-${{ matrix.ARCH }}.$dist
             done
       - name: Upload toolchain
