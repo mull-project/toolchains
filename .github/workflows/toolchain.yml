@@ -9,6 +9,9 @@ env:
     # Stage2 is compiled by the freshly built stage1 clang, which has a new
     # mtime on every run; hash its contents so ccache can still hit
     CCACHE_COMPILERCHECK: "content"
+    # Apple's ld hashes object file mtimes from the debug map into LC_UUID,
+    # which made the (always -g) compiler-rt dylibs differ between runs
+    ZERO_AR_DATE: "1"
 
 on:
   push:
